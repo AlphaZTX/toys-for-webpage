@@ -1,0 +1,7 @@
+.icon {
+    height: calc(1.6rem + 3vh);
+}
+
+.icon:hover {
+    cursor: pointer;
+}

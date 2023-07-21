@@ -1,0 +1,8 @@
+body {
+    background: linear-gradient(darkseagreen, darkolivegreen);
+}
+
+html.dark body {
+    background: linear-gradient(darkslategray, #393636);
+    color: #CED0D6;
+}
