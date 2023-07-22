@@ -13,5 +13,5 @@
       "element-plus/global"
     ],
     "isolatedModules ":  true,
-  }
+  },
 }

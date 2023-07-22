@@ -34,11 +34,21 @@ export default defineConfig({
       output: {
         manualChunks(id){
           if(id.includes('node_modules')){
-            return id.toString().split('node_modules/')[1].split('/')[0].toString()
+            const suffix = id.toString().split('node_modules/')[1];
+            const name = suffix.split('/')[0].toString()
+            switch (name) {
+              case '@element-plus':
+              case 'lodash-es':
+              case 'index':
+              case '@vueuse':
+              case 'element-plus':
+              case '@vue':
+                return name;
+              default:
+                return '__vendor'
+            }
           }
         },
-        chunkFileNames: 'assets/js/[name]-[hash].js',
-        entryFileNames: 'assets/js/[name]-[hash].js',
       }
     }
   }
