@@ -1,12 +1,6 @@
 <script setup lang="ts">
-import Zhihu from "./icons/Zhihu.vue";
-import Github from "./icons/Github.vue";
-import Bilibili from "@/components/icons/Bilibili.vue";
-import CTAN from "@/components/icons/CTAN.vue";
 import {ref, watch} from 'vue';
 import global from "@/utils/global.vue";
-import {ElImage} from "element-plus";
-import {ElSpace} from "element-plus";
 
 defineExpose({
     name: 'Introduction'

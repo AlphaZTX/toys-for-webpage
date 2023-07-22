@@ -1,9 +1,4 @@
 <script setup lang="ts">
-import Top from './components/Top.vue'
-import Introduction from "./components/Introduction.vue";
-import {ElScrollbar} from "element-plus";
-import {ElLink} from "element-plus";
-import {ElConfigProvider} from "element-plus";
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 </script>
 
