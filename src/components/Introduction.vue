@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import {ref, watch} from 'vue';
-import global from "@/utils/global.vue";
+import getGlobalProperties from "@/utils/global.js";
 
 defineExpose({
     name: 'Introduction'
 })
 
-const isDark = global.isDark
-console.log(isDark == true)
-const photoSrc = ref(isDark ? '/photo-yellow.png' : '/photo.jpg')
-watch(global.isDark, async (newValue, oldValue) => {
+const isDark = getGlobalProperties().$isDark
+
+const photoSrc = ref(isDark.value ? '/photo-yellow.png' : '/photo.jpg')
+watch(isDark, async (newValue) => {
     photoSrc.value = newValue ? '/photo-yellow.png' : '/photo.jpg'
 })
 

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import {useToggle} from '@vueuse/core';
-import global from "@/utils/global.vue";
+import getGlobalProperties from "@/utils/global.js";
 
-const toggleDark: any = useToggle(global.isDark);
-const isDark = global.isDark;
+const toggleDark: any = useToggle(getGlobalProperties().$isDark);
+const isDark = getGlobalProperties().$isDark
 
 defineExpose({
     name: 'Top'
