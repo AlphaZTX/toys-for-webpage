@@ -16,6 +16,7 @@ watch(isDark, async (newValue) => {
 function open(url: string): void {
     window.open(url)
 }
+
 function touchDogHead(): void {
     const srcList: string[] = ['/porn0.png', '/porn1.png', '/porn2.png']
     for (let i = 0; i < srcList.length; i++) {
@@ -32,7 +33,10 @@ function touchDogHead(): void {
   <div>
     <el-image @click="touchDogHead" class="dog-head" :src="photoSrc" :fit="'cover'">
       <template #error>
-        <p>绿🐕加载失败</p>
+        <div class="image-slot">绿🐕加载失败</div>
+      </template>
+      <template #placeholder>
+        <div class="image-slot">Loading ...</div>
       </template>
     </el-image>
     <div class="introduction-icon-div">
@@ -55,6 +59,7 @@ function touchDogHead(): void {
     cursor: grab;
     margin: 10pt 20pt;
     min-width: 150px;
+    min-height: 150px;
 }
 
 .dog-head:hover {
@@ -64,6 +69,15 @@ function touchDogHead(): void {
 .introduction-icon-div {
     display: flex;
     text-align: center;
+}
+
+.image-slot {
+    margin-top: 30%;
+    width: 100%;
+    height: 100%;
+    font-size: 2rem;
+    font-family: Arial, serif;
+    font-weight: bolder;
 }
 
 @media screen and (max-width: 768px) {

@@ -13,7 +13,7 @@ import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
         <el-scrollbar class="app-scrollbar">
           <p style="margin-left: 10pt; font-size: 3rem;">
             Wait for my
-            <el-link style="font-size: 3rem; padding-bottom: 0.4rem;" type="success"
+            <el-link style="font-size: 3rem; padding-bottom: 0.4rem;" type="success" target="_blank"
                      href="https://github.com/AlphaZTX/LaTeX-tutorials">
               book
             </el-link>
