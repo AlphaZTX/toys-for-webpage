@@ -1,4 +1,5 @@
-# alphaZTX_website
+# toys-for-webpage
+Experimental tools for alphaztx.github.io
 
 The project is deployed on [alphaztx.github.io](https://alphaztx.github.io/)
 ***
