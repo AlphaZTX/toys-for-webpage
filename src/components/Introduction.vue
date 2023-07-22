@@ -3,26 +3,40 @@ import Zhihu from "./icons/Zhihu.vue";
 import Github from "./icons/Github.vue";
 import Bilibili from "@/components/icons/Bilibili.vue";
 import CTAN from "@/components/icons/CTAN.vue";
-import { ref } from 'vue';
+import {ref, watch} from 'vue';
+import global from "@/utils/global.vue";
+import {ElImage} from "element-plus";
+import {ElSpace} from "element-plus";
 
 defineExpose({
     name: 'Introduction'
 })
 
+const isDark = global.isDark
+console.log(isDark == true)
+const photoSrc = ref(isDark ? '/photo-yellow.png' : '/photo.jpg')
+watch(global.isDark, async (newValue, oldValue) => {
+    photoSrc.value = newValue ? '/photo-yellow.png' : '/photo.jpg'
+})
+
 function open(url: string): void {
-  window.open(url)
+    window.open(url)
 }
-
-const photo = ref()
-
 function touchDogHead(): void {
-
+    const srcList: string[] = ['/porn0.png', '/porn1.png', '/porn2.png']
+    for (let i = 0; i < srcList.length; i++) {
+        if (photoSrc.value === srcList[i]) {
+            photoSrc.value = srcList[(i + 1) % srcList.length]
+            return
+        }
+    }
+    photoSrc.value = srcList[0]
 }
 </script>
 
 <template>
   <div>
-    <el-image ref="photo" @click="touchDogHead" class="dog-head" src="/photo.jpg" :fit="'cover'">
+    <el-image @click="touchDogHead" class="dog-head" :src="photoSrc" :fit="'cover'">
       <template #error>
         <p>绿🐕加载失败</p>
       </template>
@@ -47,6 +61,10 @@ function touchDogHead(): void {
     cursor: grab;
     margin: 10pt 20pt;
     min-width: 150px;
+}
+
+.dog-head:hover {
+    margin: 10pt 10pt;
 }
 
 .introduction-icon-div {

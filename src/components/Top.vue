@@ -1,20 +1,24 @@
 <script setup lang="ts">
-import {useDark, useToggle} from '@vueuse/core'
+import {useToggle} from '@vueuse/core';
+import global from "@/utils/global.vue";
 
-const isDark = useDark()
-const toggleDark = useToggle(isDark)
+const toggleDark: any = useToggle(global.isDark);
+const isDark = global.isDark;
 
 defineExpose({
     name: 'Top'
-})
+});
 </script>
 
 <template>
   <div class="my-div">
     <div style="flex: 1"></div>
     <div class="my-head">
-      <span class="my-beating-heart">🧡</span>AlphaZTX
-      <span class="my-beating-heart">🧡</span>
+      <span v-if="!isDark" class="my-beating-heart">🧡</span>
+      <span v-else class="my-beating-heart">💚</span>
+      AlphaZTX
+      <span v-if="!isDark" class="my-beating-heart">🧡</span>
+      <span v-else class="my-beating-heart">💚</span>
     </div>
     <div style="flex: 1"></div>
     <div class="my-button-div">

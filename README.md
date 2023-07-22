@@ -1,5 +1,7 @@
 # alphaZTX_website
 
+The project is deployed on [alphaztx.github.io](https://alphaztx.github.io/)
+***
 This template should help get you started developing with Vue 3 in Vite.
 
 ## Recommended IDE Setup
