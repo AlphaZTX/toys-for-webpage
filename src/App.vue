@@ -11,17 +11,30 @@ import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
       </div>
       <div class="my-act-part">
         <el-scrollbar class="app-scrollbar">
-          <p style="margin-left: 10pt; font-size: 3rem;">
-            Wait for my
-            <el-link style="font-size: 3rem; padding-bottom: 0.4rem;" type="success" target="_blank"
-                     href="https://github.com/AlphaZTX/LaTeX-tutorials">
-              book
-            </el-link>
-            📕.
+          <p style="margin-left: 10pt; font-size: 20px;">
+            My <vue-latex :expression="'\\LaTeX'" fontsize="20"/> packages:
           </p>
-          <p style="margin-left: 10pt; font-size: 3rem;">
-            Coming soon.😉
-          </p>
+          <ul style="margin-left: 10pt; font-size: 20px;">
+            <li>
+              <el-link style="font-size: 20px" target="_blank" type="primary"
+                         href="https://github.com/AlphaZTX/fixdif">
+              fixdif:</el-link>
+              <el-text style="font-size: 20px"> The fixdif package provides an interface for
+              defining the style of differential operators.</el-text>
+            </li>
+            <li>
+              <el-link style="font-size: 20px" target="_blank" type="primary"
+                       href="https://github.com/AlphaZTX/physics2">
+                physics2:</el-link>
+              <el-text style="font-size: 20px"> This package defines commands for typesetting math formulae faster and more simply.</el-text>
+            </li>
+            <li>
+              <el-link style="font-size: 20px" target="_blank" type="primary"
+                       href="https://github.com/AlphaZTX/unimath-plain-xetex">
+                unimath-plain-xetex:</el-link>
+              <el-text style="font-size: 20px"> This package provides OpenType math support in (plain) XeTeX. See unimath-plain-xetex-doc.pdf for more information.</el-text>
+            </li>
+          </ul>
         </el-scrollbar>
       </div>
     </div>
