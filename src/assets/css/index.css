@@ -6,3 +6,15 @@ html.dark body {
     background: linear-gradient(darkslategray, #393636);
     color: #CED0D6;
 }
+
+:root {
+    --el-text-color-regular: black !important;
+}
+
+.el-button {
+
+}
+
+.el-link {
+    color: #421ff2 !important;
+}

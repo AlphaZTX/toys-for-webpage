@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="绿狗icon.jpg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>What time is it?</title>
+    <style>
+        @font-face {
+            font-family: 'AlphaClockVF';
+            src: url('fonts/ttf/AlphaClockVF.ttf') format('truetype');
+            font-display: swap;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #0f0f0f;
+            color: #eeeeee;
+            font-family: 'AlphaClockVF', system-ui, sans-serif;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        a {
+            color: #eeeeee;
+            text-decoration: none;
+        }
+
+        #controls {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            background: #222;
+            font-family: system-ui, sans-serif;
+            z-index: 10;
+            position: relative;
+        }
+
+        #leftControls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        #rightControls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #featureToggles {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            gap: 12px;
+        }
+
+        .feature-block {
+            flex: 0 0 auto;
+        }
+
+        .feature-block label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            color: #ccc;
+            cursor: pointer;
+        }
+
+        #datetime {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            contain: strict;
+        }
+
+        #datetimeText {
+            font-variation-settings: 'wght' 500, 'ytuc' 100;
+            font-feature-settings: normal;
+            will-change: transform, font-variation-settings;
+            backface-visibility: hidden;
+            transform: translateZ(0);
+        }
+
+        button {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            background-color: #444;
+            color: white;
+            opacity: 0.7;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 1;
+        }
+
+        #lockStatus {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            background-color: #444;
+            color: white;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        #metrics {
+            display: flex;
+            flex-direction: column;
+            padding: 6px 12px;
+            font-family: system-ui, sans-serif;
+            background: #111;
+            gap: 8px;
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            align-items: flex-end;
+            text-align: right;
+            z-index: 10;
+            contain: content;
+        }
+
+        .metric {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            gap: 8px;
+            will-change: transform;
+        }
+
+        .metric-label {
+            width: 5em;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .copyrightText {
+            font-size: 12px;
+            opacity: 0.5;
+        }
+
+        .bar {
+            height: 6px;
+            max-width: 5em;
+            width: 5em;
+            background: #444;
+            border-radius: 3px;
+            overflow: hidden;
+            flex-grow: 1;
+            contain: strict;
+        }
+
+        .fill {
+            height: 100%;
+            background: #2af;
+            will-change: width;
+            transition: width 0.1s ease-out;
+        }
+
+        #fpsDisplay {
+            font-size: 12px;
+            opacity: 0.5;
+        }
+
+        input[type="range"] {
+            height: 6px;
+            background: #444;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            /* -webkit-appearance: none; */
+            width: 14px;
+            height: 14px;
+            background: #2af;
+            border-radius: 50%;
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/opentype.js@latest/dist/opentype.min.js"></script>
+</head>
+<body>
+<div id="controls">
+    <div id="leftControls">
+        <b><a href="https://alphaztx.github.io" target="_blank">Home</a></b>
+        <span></span>
+        <label for="fontSize">Font Size</label>
+        <input type="range" id="fontSize" min="40" max="128" value="80"/>
+        <span></span>
+        <label for="featureToggles">Features</label>
+        <div id="featureToggles"></div>
+    </div>
+    <div id="rightControls">
+        <button id="soundToggle">Sound Control: OFF</button>
+        <div id="lockStatus">Click anywhere or press Enter to see difference</div>
+    </div>
+</div>
+<div id="datetime">
+    <div id="datetimeText">Loading...</div>
+</div>
+<div id="metrics">
+    <div class="metric">
+        <div class="metric-label">Weight</div>
+        <div class="bar">
+            <div id="wghtBar" class="fill" style="width:0%"></div>
+        </div>
+    </div>
+    <div class="metric">
+        <div class="metric-label">Height</div>
+        <div class="bar">
+            <div id="ytucBar" class="fill" style="width:0%"></div>
+        </div>
+    </div>
+    <div id="fpsDisplay">FPS: --</div>
+    <div class="copyrightText">© Copyright 2025 AlphaZTX</div>
+</div>
+
+<script>
+    const datetimeText = document.getElementById('datetimeText');
+    const fontSizeSlider = document.getElementById('fontSize');
+    const soundToggle = document.getElementById('soundToggle');
+    const featureTogglesContainer = document.getElementById('featureToggles');
+    const lockStatus = document.getElementById('lockStatus');
+    const wghtBar = document.getElementById('wghtBar');
+    const ytucBar = document.getElementById('ytucBar');
+    const fpsDisplay = document.getElementById('fpsDisplay');
+    const featureToggles = {};
+
+    let wghtRange = [100, 1000];
+    let ytucRange = [100, 250];
+    let currentWght = 500;
+    let currentYtuc = 100;
+    let mouseControlEnabled = true;
+    let soundControlEnabled = false;
+    let audioContext, analyser, microphone, dataArray;
+    let availableFeatures = [];
+    const tagLookupMap = new Map();
+
+    let lastWght = null;
+    let lastYtuc = null;
+
+    let lastFrame = performance.now();
+    let frameCount = 0;
+    let fps = 0;
+    let animationFrameId = null;
+    let lastMouseUpdate = 0;
+
+    let volume = 0;
+    let volumeFactor = 2;
+    let reducedVolume = 0;
+    let pitchRatio = 0;
+    let pitchRatioFactor = 2;
+    let reducedPitchRatio = 0;
+
+    let targetWght = 500;
+    let targetYtuc = 100;
+    let transitionDuration = 800; // 过渡时间(毫秒)
+    let transitionStartTime = 0;
+    let isTransitioning = false;
+
+    // 使用防抖函数优化事件处理
+    function debounce(func, wait) {
+        let timeout;
+        return function () {
+            const context = this;
+            const args = arguments;
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(context, args), wait);
+        };
+    }
+
+    // 使用节流函数优化高频事件
+    function throttle(func, limit) {
+        let lastFunc;
+        let lastRan;
+        return function () {
+            const context = this;
+            const args = arguments;
+            if (!lastRan) {
+                func.apply(context, args);
+                lastRan = Date.now();
+            } else {
+                clearTimeout(lastFunc);
+                lastFunc = setTimeout(function () {
+                    if ((Date.now() - lastRan) >= limit) {
+                        func.apply(context, args);
+                        lastRan = Date.now();
+                    }
+                }, limit - (Date.now() - lastRan));
+            }
+        };
+    }
+
+    function updateMetrics(timestamp) {
+        const now = performance.now();
+        frameCount++;
+
+        if (now - lastFrame >= 1000) {
+            fps = Math.round(frameCount * 1000 / (now - lastFrame));
+            frameCount = 0;
+            lastFrame = now;
+            fpsDisplay.textContent = `FPS: ${fps}`;
+        }
+
+        // 平滑过渡逻辑
+        if (isTransitioning) {
+            const elapsed = timestamp - transitionStartTime;
+            const progress = Math.min(elapsed / transitionDuration, 1);
+
+            currentWght = easeInOutQuad(progress, currentWght, targetWght - currentWght, 1);
+            currentYtuc = easeInOutQuad(progress, currentYtuc, targetYtuc - currentYtuc, 1);
+
+            if (progress >= 1) {
+                isTransitioning = false;
+            }
+        }
+
+        const roundedWght = parseFloat(currentWght.toFixed(1));
+        const roundedYtuc = parseFloat(currentYtuc.toFixed(1));
+
+        if (roundedWght !== lastWght || roundedYtuc !== lastYtuc) {
+            lastWght = roundedWght;
+            lastYtuc = roundedYtuc;
+
+            datetimeText.style.fontVariationSettings =
+                `'wght' ${roundedWght}, 'ytuc' ${roundedYtuc}`;
+
+            const wPct = ((roundedWght - wghtRange[0]) / (wghtRange[1] - wghtRange[0])) * 100;
+            const yPct = ((roundedYtuc - ytucRange[0]) / (ytucRange[1] - ytucRange[0])) * 100;
+            wghtBar.style.width = `${wPct}%`;
+            ytucBar.style.width = `${yPct}%`;
+        }
+
+        animationFrameId = requestAnimationFrame(updateMetrics);
+    }
+
+    function easeInOutQuad(t, b, c, d) {
+        t /= d / 2;
+        if (t < 1) return c / 2 * t * t + b;
+        t--;
+        return -c / 2 * (t * (t - 2) - 1) + b;
+    }
+
+    function startAnimationLoop() {
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+        }
+        updateMetrics();
+    }
+
+    async function loadFontAxesAndFeatures() {
+        try {
+            const font = new FontFace('AlphaClockVF', 'url(fonts/ttf/AlphaClockVF.ttf)');
+            await font.load();
+            document.fonts.add(font);
+
+            if (font.variationAxes) {
+                for (const axis of font.variationAxes) {
+                    if (axis.tag === 'wght') wghtRange = [axis.minValue, axis.maxValue];
+                    if (axis.tag === 'ytuc') ytucRange = [axis.minValue, axis.maxValue];
+                }
+            }
+
+            const response = await fetch('fonts/ttf/AlphaClockVF.ttf');
+            const arrayBuffer = await response.arrayBuffer();
+            const fontObj = opentype.parse(arrayBuffer);
+
+            const gsub = fontObj.tables.gsub;
+            if (gsub && gsub.features && gsub.lookups) {
+                const featureTags = new Set();
+                for (const featureRecord of gsub.features) {
+                    const tag = featureRecord.tag;
+                    const lookupIndexes = featureRecord.feature.lookupListIndexes;
+                    featureTags.add(tag);
+                    if (!tagLookupMap.has(tag)) tagLookupMap.set(tag, []);
+                    for (const lookupIndex of lookupIndexes) {
+                        const lookup = gsub.lookups[lookupIndex];
+                        if (lookup) {
+                            tagLookupMap.get(tag).push({
+                                index: lookupIndex,
+                                type: lookup.lookupType,
+                                subTables: lookup.subtables || []
+                            });
+                        }
+                    }
+                }
+                availableFeatures = Array.from(featureTags).sort();
+                createFeatureToggles();
+                if (featureToggles['tnum']) featureToggles['tnum'].checked = true;
+                updateFontFeatures();
+            }
+        } catch (error) {
+            console.error('Error loading font:', error);
+        }
+    }
+
+    function createFeatureToggles() {
+        featureTogglesContainer.innerHTML = '';
+        for (const feature of availableFeatures) {
+            const id = `${feature}Toggle`;
+            const wrapper = document.createElement('div');
+            wrapper.className = 'feature-block';
+
+            const label = document.createElement('label');
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = id;
+            checkbox.dataset.feature = feature;
+            checkbox.addEventListener('change', debounce(updateFontFeatures, 50));
+
+            label.appendChild(checkbox);
+            label.append(` ${feature}`);
+            wrapper.appendChild(label);
+            featureTogglesContainer.appendChild(wrapper);
+            featureToggles[feature] = checkbox;
+        }
+    }
+
+    function updateFontFeatures() {
+        const features = [];
+        for (const tag in featureToggles) {
+            features.push(`'${tag}' ${featureToggles[tag].checked ? 'on' : 'off'}`);
+        }
+        datetimeText.style.fontFeatureSettings = features.join(', ');
+    }
+
+    function updateDateTime() {
+        const now = new Date();
+        const yyyy = now.getFullYear();
+        const mm = String(now.getMonth() + 1).padStart(2, '0');
+        const dd = String(now.getDate()).padStart(2, '0');
+        const hh = String(now.getHours()).padStart(2, '0');
+        const mm2 = String(now.getMinutes()).padStart(2, '0');
+        const ss = String(now.getSeconds()).padStart(2, '0');
+        datetimeText.textContent = `${yyyy}-${mm}-${dd} ${hh}:${mm2}:${ss}`;
+
+        // 只在秒变化时更新，减少不必要的DOM操作
+        setTimeout(updateDateTime, 1000 - now.getMilliseconds());
+    }
+
+    const updateFontAxes = throttle((e) => {
+        if (!mouseControlEnabled) return;
+
+        const now = performance.now();
+        if (now - lastMouseUpdate < 16) return; // ~60fps
+        lastMouseUpdate = now;
+
+        const x = e.clientX / window.innerWidth;
+        const y = 1 - (e.clientY / window.innerHeight);
+
+        // 设置目标值，但不直接修改当前值
+        targetWght = wghtRange[0] + (wghtRange[1] - wghtRange[0]) * x;
+        targetYtuc = ytucRange[0] + (ytucRange[1] - ytucRange[0]) * y;
+
+        // 如果不在过渡中，开始过渡
+        if (!isTransitioning) {
+            isTransitioning = true;
+            transitionStartTime = now;
+        }
+    }, 16);
+
+    function toggleMouseControl() {
+        mouseControlEnabled = !mouseControlEnabled;
+        lockStatus.textContent = mouseControlEnabled ? 'Mouse Control: ON' : 'Mouse Control: OFF';
+        lockStatus.style.opacity = '1';
+        setTimeout(() => lockStatus.style.opacity = '0.7', 1000);
+
+        if (mouseControlEnabled) {
+            // 启用鼠标控制时开始平滑过渡
+            isTransitioning = true;
+            transitionStartTime = performance.now();
+            // 初始值与当前值相同，实际目标值由鼠标位置决定
+            targetWght = currentWght;
+            targetYtuc = currentYtuc;
+        }
+    }
+
+    async function toggleSoundControl() {
+        if (soundControlEnabled) {
+            soundControlEnabled = false;
+            mouseControlEnabled = true;
+            soundToggle.textContent = 'Sound Control: OFF';
+            soundToggle.style.opacity = '0.7';
+            if (microphone) microphone.disconnect();
+            if (analyser) analyser.disconnect();
+            if (audioContext) await audioContext.close();
+            return;
+        }
+
+        try {
+            soundControlEnabled = true;
+            mouseControlEnabled = false;
+            soundToggle.textContent = 'Sound Control: ON';
+            soundToggle.style.opacity = '1';
+
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+            microphone = audioContext.createMediaStreamSource(stream);
+            analyser = audioContext.createAnalyser();
+            analyser.fftSize = 64; // 减少FFT大小以提高性能
+            dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+            microphone.connect(analyser);
+
+            function analyze() {
+                if (!soundControlEnabled) return;
+
+                analyser.getByteFrequencyData(dataArray);
+
+                // 优化计算：只分析中间频率范围
+                const start = Math.floor(dataArray.length * 0.3);
+                const end = Math.floor(dataArray.length * 0.7);
+                let sum = 0;
+                let maxAmp = 0, maxIdx = start;
+
+                for (let i = start; i < end; i++) {
+                    sum += dataArray[i];
+                    if (dataArray[i] > maxAmp) {
+                        maxAmp = dataArray[i];
+                        maxIdx = i;
+                    }
+                }
+
+                volume = sum / (end - start);
+                reducedVolume = Math.min(1, volume * volumeFactor / 255);
+                currentWght = wghtRange[0] + (wghtRange[1] - wghtRange[0]) * reducedVolume;
+
+                pitchRatio = (maxIdx - start) / (end - start);
+                reducedPitchRatio = Math.min(1, pitchRatio * pitchRatioFactor);
+                currentYtuc = ytucRange[0] + (ytucRange[1] - ytucRange[0]) * reducedPitchRatio;
+
+                requestAnimationFrame(analyze);
+            }
+
+            analyze();
+        } catch (error) {
+            console.error('Error accessing microphone:', error);
+            soundControlEnabled = false;
+            mouseControlEnabled = true;
+            soundToggle.textContent = 'Sound Control: OFF';
+            soundToggle.style.opacity = '0.7';
+        }
+    }
+
+    // 事件监听器
+    document.addEventListener('mousemove', updateFontAxes);
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('#controls')) toggleMouseControl();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') toggleMouseControl();
+    });
+
+    soundToggle.addEventListener('click', toggleSoundControl);
+    fontSizeSlider.addEventListener('input', debounce(() => {
+        datetimeText.style.fontSize = `${fontSizeSlider.value}px`;
+    }, 50));
+
+    // 初始化
+    loadFontAxesAndFeatures();
+    updateDateTime();
+    datetimeText.style.fontSize = `${fontSizeSlider.value}px`;
+    startAnimationLoop();
+
+    // 清理
+    window.addEventListener('beforeunload', () => {
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        if (soundControlEnabled && audioContext) audioContext.close();
+    });
+</script>
+</body>
+</html>

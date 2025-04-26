@@ -4,9 +4,9 @@ import './assets/css/dark/my-css-vars.css'
 import {useDark} from "@vueuse/core";
 import App from './App.vue'
 import VueLatex from 'vatex'
-// import router from './router'
+import router from "@/router";
 
 const app = createApp(App)
 app.config.globalProperties.$isDark = useDark()
 // app.use(router)
-app.use(VueLatex).mount('#app')
+app.use(router).use(VueLatex).mount('#app')

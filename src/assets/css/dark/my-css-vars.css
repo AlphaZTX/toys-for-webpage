@@ -1,4 +1,7 @@
-html.dark {
-    --el-bg-color: green;
-    --el-border-color: #B9B9B5;
+:root.dark {
+    --el-text-color-regular: #CFD3DC !important;
+}
+
+.dark .el-link {
+    color: var(--el-color-primary) !important;
 }

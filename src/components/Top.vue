@@ -22,18 +22,18 @@ defineExpose({
     </div>
     <div style="flex: 1"></div>
     <div class="my-button-div">
-      <button class="my-button" @click="toggleDark()">
+      <el-button class="my-button" @click="toggleDark()">
         <span id="top-bu-span">
           {{ isDark ? '🌙深色' : '🔆浅色' }}
         </span>
-      </button>
+      </el-button>
     </div>
   </div>
 </template>
 
 <style scoped>
 div.my-head {
-    font-family: Georgia, serif;
+    font-family: Arial, Helvetica, sans-serif, Georgia;
     font-size: calc(1rem + 5vw);
     text-align: center;
     align-items: center;

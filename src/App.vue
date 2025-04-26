@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
+import getGlobalProperties from "@/utils/global.js";
+
+const isDark = getGlobalProperties().$isDark;
 </script>
 
 <template>
@@ -35,6 +38,10 @@ import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
               <el-text style="font-size: 20px"> This package provides OpenType math support in (plain) XeTeX. See unimath-plain-xetex-doc.pdf for more information.</el-text>
             </li>
           </ul>
+          <el-button :dark="isDark" class="my-button" style="margin-left: 10pt;
+          font-size: 20px;" round type="primary">
+            Clock
+          </el-button>
         </el-scrollbar>
       </div>
     </div>
