@@ -5,9 +5,12 @@ defineExpose({
 </script>
 
 <template>
-  <iframe src="/clock.html" style="width: 100%; height: 100vh; border:none;"/>
+  <iframe src="/clock.html" style="width: 100%; height: calc(100vh - 5px);
+  border:none;"/>
 </template>
 
-<style scoped>
-
+<style>
+body {
+  margin: 0;
+}
 </style>
