@@ -8,7 +8,7 @@
     <style>
         @font-face {
             font-family: 'AlphaClockVF';
-            src: url('fonts/ttf/AlphaClockVF.ttf') format('truetype');
+            src: url('fonts/ttf/AlphaClockR-VF.ttf') format('truetype');
             font-display: swap;
         }
 
@@ -87,7 +87,7 @@
         }
 
         #datetimeText {
-            font-variation-settings: 'wght' 500, 'ytuc' 100;
+            font-variation-settings: 'wght' 500, 'ytas' 880;
             font-feature-settings: normal;
             will-change: transform, font-variation-settings;
             backface-visibility: hidden;
@@ -225,7 +225,7 @@
     <div class="metric">
         <div class="metric-label">Height</div>
         <div class="bar">
-            <div id="ytucBar" class="fill" style="width:0%"></div>
+            <div id="ytasBar" class="fill" style="width:0%"></div>
         </div>
     </div>
     <div id="fpsDisplay">FPS: --</div>
@@ -239,14 +239,14 @@
     const featureTogglesContainer = document.getElementById('featureToggles');
     const lockStatus = document.getElementById('lockStatus');
     const wghtBar = document.getElementById('wghtBar');
-    const ytucBar = document.getElementById('ytucBar');
+    const ytasBar = document.getElementById('ytasBar');
     const fpsDisplay = document.getElementById('fpsDisplay');
     const featureToggles = {};
 
     let wghtRange = [100, 1000];
-    let ytucRange = [100, 250];
+    let ytasRange = [880, 2200];
     let currentWght = 500;
-    let currentYtuc = 100;
+    let currentYtas = 880;
     let mouseControlEnabled = true;
     let soundControlEnabled = false;
     let audioContext, analyser, microphone, dataArray;
@@ -254,7 +254,7 @@
     const tagLookupMap = new Map();
 
     let lastWght = null;
-    let lastYtuc = null;
+    let lastYtas = null;
 
     let lastFrame = performance.now();
     let frameCount = 0;
@@ -270,7 +270,7 @@
     let reducedPitchRatio = 0;
 
     let targetWght = 500;
-    let targetYtuc = 100;
+    let targetYtas = 880;
     let transitionDuration = 800; // 过渡时间(毫秒)
     let transitionStartTime = 0;
     let isTransitioning = false;
@@ -325,7 +325,7 @@
             const progress = Math.min(elapsed / transitionDuration, 1);
 
             currentWght = easeInOutQuad(progress, currentWght, targetWght - currentWght, 1);
-            currentYtuc = easeInOutQuad(progress, currentYtuc, targetYtuc - currentYtuc, 1);
+            currentYtas = easeInOutQuad(progress, currentYtas, targetYtas - currentYtas, 1);
 
             if (progress >= 1) {
                 isTransitioning = false;
@@ -333,19 +333,19 @@
         }
 
         const roundedWght = parseFloat(currentWght.toFixed(1));
-        const roundedYtuc = parseFloat(currentYtuc.toFixed(1));
+        const roundedYtas = parseFloat(currentYtas.toFixed(1));
 
-        if (roundedWght !== lastWght || roundedYtuc !== lastYtuc) {
+        if (roundedWght !== lastWght || roundedYtas !== lastYtas) {
             lastWght = roundedWght;
-            lastYtuc = roundedYtuc;
+            lastYtas = roundedYtas;
 
             datetimeText.style.fontVariationSettings =
-                `'wght' ${roundedWght}, 'ytuc' ${roundedYtuc}`;
+                `'wght' ${roundedWght}, 'ytas' ${roundedYtas}`;
 
             const wPct = ((roundedWght - wghtRange[0]) / (wghtRange[1] - wghtRange[0])) * 100;
-            const yPct = ((roundedYtuc - ytucRange[0]) / (ytucRange[1] - ytucRange[0])) * 100;
+            const yPct = ((roundedYtas - ytasRange[0]) / (ytasRange[1] - ytasRange[0])) * 100;
             wghtBar.style.width = `${wPct}%`;
-            ytucBar.style.width = `${yPct}%`;
+            ytasBar.style.width = `${yPct}%`;
         }
 
         animationFrameId = requestAnimationFrame(updateMetrics);
@@ -367,18 +367,18 @@
 
     async function loadFontAxesAndFeatures() {
         try {
-            const font = new FontFace('AlphaClockVF', 'url(fonts/ttf/AlphaClockVF.ttf)');
+            const font = new FontFace('AlphaClockVF', 'url(fonts/ttf/AlphaClockR-VF.ttf)');
             await font.load();
             document.fonts.add(font);
 
             if (font.variationAxes) {
                 for (const axis of font.variationAxes) {
                     if (axis.tag === 'wght') wghtRange = [axis.minValue, axis.maxValue];
-                    if (axis.tag === 'ytuc') ytucRange = [axis.minValue, axis.maxValue];
+                    if (axis.tag === 'ytas') ytasRange = [axis.minValue, axis.maxValue];
                 }
             }
 
-            const response = await fetch('fonts/ttf/AlphaClockVF.ttf');
+            const response = await fetch('fonts/ttf/AlphaClockR-VF.ttf');
             const arrayBuffer = await response.arrayBuffer();
             const fontObj = opentype.parse(arrayBuffer);
 
@@ -467,7 +467,7 @@
 
         // 设置目标值，但不直接修改当前值
         targetWght = wghtRange[0] + (wghtRange[1] - wghtRange[0]) * x;
-        targetYtuc = ytucRange[0] + (ytucRange[1] - ytucRange[0]) * y;
+        targetYtas = ytasRange[0] + (ytasRange[1] - ytasRange[0]) * y;
 
         // 如果不在过渡中，开始过渡
         if (!isTransitioning) {
@@ -488,7 +488,7 @@
             transitionStartTime = performance.now();
             // 初始值与当前值相同，实际目标值由鼠标位置决定
             targetWght = currentWght;
-            targetYtuc = currentYtuc;
+            targetYtas = currentYtas;
         }
     }
 
@@ -544,7 +544,7 @@
 
                 pitchRatio = (maxIdx - start) / (end - start);
                 reducedPitchRatio = Math.min(1, pitchRatio * pitchRatioFactor);
-                currentYtuc = ytucRange[0] + (ytucRange[1] - ytucRange[0]) * reducedPitchRatio;
+                currentYtas = ytasRange[0] + (ytasRange[1] - ytasRange[0]) * reducedPitchRatio;
 
                 requestAnimationFrame(analyze);
             }
